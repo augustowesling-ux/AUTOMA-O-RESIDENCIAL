@@ -1,308 +1,216 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Automação Completo</title>
-    
-    <!-- Biblioteca MQTT Paho Oficial via CDN (Essencial para rodar o MQTT no navegador) -->
-    <script src="https://cloudflare.com" type="text/javascript"></script>
-    
-    <style>
-        :root {
-            --bg-color: #f0f2f5;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --text-secondary: #666666;
-            --primary-color: #4a90e2;
-            --accent-on: #2ecc71;
-            --accent-off: #e74c3c;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-color: #121212;
-                --card-bg: #1e1e1e;
-                --text-color: #ffffff;
-                --text-secondary: #b0b0b0;
-            }
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            border-bottom: 2px solid var(--card-bg);
-            padding-bottom: 15px;
-        }
-
-        h1 {
-            margin: 0;
-            font-size: 24px;
-        }
-
-        h2 {
-            margin: 0 0 15px 0;
-            font-size: 20px;
-            color: var(--primary-color);
-            grid-column: 1 / -1;
-        }
-
-        .status-geral {
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-
-        .section-block {
-            margin-bottom: 35px;
-        }
-
-        .grid-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 20px;
-        }
-
-        .disp-card {
-            background-color: var(--card-bg);
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-sizing: border-box;
-        }
-
-        .ac-card {
-            flex-direction: column;
-            align-items: stretch;
-            gap: 15px;
-        }
-
-        .ac-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .ac-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: rgba(0,0,0,0.03);
-            padding: 10px 15px;
-            border-radius: 10px;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            .ac-controls {
-                background-color: rgba(255,255,255,0.05);
-            }
-        }
-
-        .ac-btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .ac-btn:active {
-            opacity: 0.8;
-        }
-
-        .ac-temp-display {
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .disp-info h3 {
-            margin: 0 0 5px 0;
-            font-size: 18px;
-        }
-
-        .disp-status {
-            font-size: 11px;
-            font-weight: bold;
-            text-transform: uppercase;
-            padding: 2px 8px;
-            border-radius: 10px;
-            display: inline-block;
-        }
-
-        .status-ligado {
-            background-color: rgba(46, 204, 113, 0.1);
-            color: var(--accent-on);
-        }
-
-        .status-desligado {
-            background-color: rgba(231, 76, 60, 0.1);
-            color: var(--accent-off);
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-            flex-shrink: 0;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background-color: var(--accent-on);
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Casa inteligente</title>
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --page:#ffffff; --scr:#2b2b2b; --row:#444444; --rowh:#505050; --txt:#f2f2f2; --mut:#a8a8a8; --ok:#7fd08a; --warn:#f0b35a;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--page:#161616;color-scheme:dark}}
+:root[data-theme="dark"]{--page:#161616;color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--page);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;justify-content:center}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.phone{width:100%;max-width:390px;min-height:100vh;background:var(--scr);color:var(--txt);display:flex;flex-direction:column}
+@media (min-width:500px){.phone{min-height:720px;margin:24px 0;border-radius:36px;border:8px solid #111;box-shadow:0 0 0 2px #666}}
+header{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;padding:18px 12px 8px}
+header h1{margin:0;font-size:1rem;font-weight:600;text-align:center}
+.icon-btn{width:44px;height:44px;display:grid;place-items:center;border-radius:50%}
+svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+#view{flex:1;padding:8px 16px 24px}
+.hero{display:grid;place-items:center;padding:14px 0 22px;color:#9a9a9a}
+.hero svg{width:96px;height:96px;stroke-width:2}
+.menu{display:flex;flex-direction:column;gap:10px}
+.item{display:grid;grid-template-columns:40px 1fr 24px;align-items:center;background:var(--row);border-radius:6px;padding:11px 12px;text-align:center;font-size:1rem;width:100%}
+.item:hover{background:var(--rowh)}
+.item .chev{color:var(--mut);width:20px;height:20px}
+.card{background:var(--row);border-radius:6px;padding:14px;margin-bottom:10px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.mut{color:var(--mut);font-size:.9rem}
+.sw{width:50px;height:28px;border-radius:999px;background:#2b2b2b;position:relative;flex:none;border:1.5px solid #777}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#aaa;transition:transform .2s}
+.sw[aria-checked="true"]{background:var(--ok);border-color:var(--ok)}
+.sw[aria-checked="true"]::after{transform:translateX(22px);background:#fff}
+.pill{border-radius:999px;border:1.5px solid #777;padding:7px 16px;font-weight:600}
+.pill.on{background:#f2f2f2;color:#222;border-color:#f2f2f2}
+.big{font-size:3rem;font-weight:700;text-align:center;margin:6px 0}
+.steps{display:flex;justify-content:center;gap:24px;align-items:center}
+.circle{width:52px;height:52px;border-radius:50%;border:1.5px solid #777;font-size:1.5rem}
+.modes{display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.cams{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cam{aspect-ratio:4/3;border-radius:6px;background:linear-gradient(135deg,#3a3a3a,#1f1f1f);position:relative;display:flex;align-items:flex-end;padding:8px;text-align:left;font-size:.85rem;width:100%}
+.cam.off{background:#1a1a1a;color:var(--mut)}
+.st{display:grid;place-items:center}.st i{width:10px;height:10px;border-radius:50%;background:#777}.st.ok i{background:var(--ok)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#e0584f;margin-right:6px}
+.cam.off .dot{background:#777}
+.big-status{text-align:center;padding:18px 0 8px}
+.big-status svg{width:64px;height:64px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
 </head>
 <body>
+<div class="phone">
+  <header>
+    <button class="icon-btn" id="back" aria-label="Voltar" hidden><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <span id="sp" class="st" role="status" aria-label="MQTT desconectado"><i></i></span>
+    <h1 id="title">Casa inteligente</h1>
+    <button class="icon-btn" aria-label="Mais opções"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>
+  </header>
+  <div id="view" aria-live="polite"></div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/4.3.7/mqtt.min.js"></script>
+<script>
+var I = {
+  casa:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><circle cx="12" cy="13" r="2.5"/>',
+  seg:'<rect x="5" y="11" width="14" height="10" rx="1.5"/><path d="M8 11V8a4 4 0 018 0v3"/><circle cx="12" cy="16" r="1"/>',
+  cam:'<circle cx="12" cy="10" r="6"/><circle cx="12" cy="10" r="2.5"/><path d="M8 20h8M12 16v4"/>',
+  luz:'<path d="M9 18h6M10 21h4M12 3a6 6 0 00-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0012 3z"/>',
+  lock:'<path d="M5 3h8v18H5z"/><path d="M13 9h6v2h-6"/><circle cx="9" cy="12" r="1"/>',
+  temp:'<path d="M10 14V5a2 2 0 014 0v9a4 4 0 11-4 0z"/><path d="M12 9v7"/>',
+  cfg:'<circle cx="12" cy="12" r="3"/><path d="M12 2l1.5 3 3-1 1 3 3 1-1 3 3 1.5-3 1.5 1 3-3 1-1 3-3-1L12 22l-1.5-3-3 1-1-3-3-1 1-3L2 12l3-1.5-1-3 3-1 1-3 3 1z"/>',
+  chev:'<path d="M9 6l6 6-6 6"/>'
+};
+function ic(n,c){return '<svg viewBox="0 0 24 24"'+(c?' class="'+c+'"':'')+'>'+I[n]+'</svg>'}
 
-    <div class="container">
-        <header>
-            <div>
-                <h1>Controle Residencial Integrado</h1>
-                <div class="status-geral">Broker: <strong id="mqtt-status" style="color: var(--accent-off);">Conectando...</strong></div>
-            </div>
-            <div id="data-hora">--:--</div>
-        </header>
+var s = {
+  alarme:false,
+  sensores:[{n:'Porta da frente',ok:true},{n:'Janela da sala',ok:true},{n:'Movimento no corredor',ok:true}],
+  cams:[{n:'Entrada',on:true},{n:'Garagem',on:true},{n:'Quintal',on:true},{n:'Sala',on:false}],
+  luzes:[{n:'Sala',on:true},{n:'Cozinha',on:false},{n:'Quarto',on:false},{n:'Garagem',on:false},{n:'Jardim',on:true}],
+  trancas:[{n:'Porta da frente',t:true},{n:'Porta dos fundos',t:true},{n:'Garagem',t:false}],
+  temp:23, ac:true, modo:'Auto',
+  notif:[{n:'Movimento detectado',on:true},{n:'Porta aberta',on:true},{n:'Alarme disparado',on:true}]
+};
+var tela = 'home';
+var titulos = {home:'Casa inteligente',seg:'Segurança',cam:'Câmeras',luz:'Luzes',lock:'Fechadura',temp:'Clima',cfg:'Configurações'};
+var menu = [['seg','Segurança'],['cam','Câmeras'],['luz','Luzes'],['lock','Fechadura'],['temp','Clima'],['cfg','Configurações']];
 
-        <!-- CLIMATIZAÇÃO (AR CONDICIONADO) -->
-        <div class="section-block">
-            <h2>Climatização</h2>
-            <div class="grid-cards">
-                <div class="disp-card ac-card" id="card-ar">
-                    <div class="ac-header">
-                        <div class="disp-info">
-                            <h3>Ar Condicionado</h3>
-                            <span class="disp-status status-desligado" id="status-ar">Desligado</span>
-                        </div>
-                        <label class="switch">
-                            <input type="checkbox" id="check-ar" onchange="publicarComando('casa/ar/energia', this.checked ? '1' : '0')">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    <div class="ac-controls">
-                        <button class="ac-btn" onclick="alterarTemperatura(-1)">-</button>
-                        <div class="ac-temp-display"><span id="temp-ar">22</span>°C</div>
-                        <button class="ac-btn" onclick="alterarTemperatura(1)">+</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+function sw(on,act,i,label){return '<button class="sw" role="switch" aria-checked="'+on+'" aria-label="'+label+'" data-act="'+act+'" data-i="'+i+'"></button>'}
 
-        <!-- ILUMINAÇÃO (TODOS OS CÔMODOS) -->
-        <div class="section-block">
-            <h2>Iluminação</h2>
-            <div class="grid-cards">
-                <!-- Sala -->
-                <div class="disp-card" id="card-luz-sala">
-                    <div class="disp-info">
-                        <h3>Luz da Sala</h3>
-                        <span class="disp-status status-desligado" id="status-luz-sala">Desligado</span>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" id="check-luz-sala" onchange="publicarComando('casa/luz/sala', this.checked ? '1' : '0')">
-                        <span class="slider"></span>
-                    </label>
-                </div>
+var T = {
+  home:function(){
+    return '<div class="hero">'+ic('casa')+'</div><nav class="menu">'+menu.map(function(m){
+      return '<button class="item" data-go="'+m[0]+'">'+ic(m[0])+'<span>'+m[1]+'</span>'+ic('chev','chev')+'</button>'}).join('')+'</nav>';
+  },
+  seg:function(){
+    return '<div class="big-status">'+ic('seg')+'<p style="font-size:1.2rem;margin:8px 0 2px">Alarme '+(s.alarme?'armado':'desarmado')+'</p>' +
+      '<p class="mut" style="margin:0 0 14px">'+(s.alarme?'Sensores monitorando a casa':'Arme ao sair de casa ou ao dormir')+'</p>' +
+      '<button class="pill on" data-act="alarme">'+(s.alarme?'Desarmar':'Armar alarme')+'</button></div>' +
+      '<p class="mut">Sensores</p>'+s.sensores.map(function(x){
+        return '<div class="card row"><span>'+x.n+'</span><span style="color:var(--ok)">Normal</span></div>'}).join('');
+  },
+  cam:function(){
+    return '<div class="cams">'+s.cams.map(function(c,i){
+      return '<button class="cam'+(c.on?'':' off')+'" data-act="cam" data-i="'+i+'" aria-label="'+c.n+', '+(c.on?'ao vivo':'desligada')+'"><span><span class="dot"></span>'+c.n+'<br><span class="mut">'+(c.on?'Ao vivo':'Desligada')+'</span></span></button>'}).join('')+'</div>' +
+      '<p class="mut" style="margin-top:12px">Toque em uma câmera para ligar ou desligar. Imagens simuladas.</p>';
+  },
+  luz:function(){
+    var n = s.luzes.filter(function(l){return l.on}).length;
+    return '<p class="mut">'+n+(n===1?' luz acesa':' luzes acesas')+'</p>'+s.luzes.map(function(l,i){
+      return '<div class="card row"><span>'+l.n+'</span>'+sw(l.on,'luz',i,'Luz '+l.n)+'</div>'}).join('') +
+      '<div class="modes"><button class="pill" data-act="todas" data-i="1">Acender todas</button><button class="pill" data-act="todas" data-i="0">Apagar todas</button></div>';
+  },
+  lock:function(){
+    return s.trancas.map(function(t,i){
+      return '<div class="card row"><div><div>'+t.n+'</div><div class="mut" style="color:'+(t.t?'var(--ok)':'var(--warn)')+'">'+(t.t?'Trancada':'Destrancada')+'</div></div>' +
+        '<button class="pill'+(t.t?'':' on')+'" data-act="tranca" data-i="'+i+'">'+(t.t?'Destrancar':'Trancar')+'</button></div>'}).join('');
+  },
+  temp:function(){
+    return '<div class="card"><p class="mut" style="text-align:center;margin:0">Temperatura desejada</p><div class="big">'+s.temp+' °C</div>' +
+      '<div class="steps"><button class="circle" data-act="menos" aria-label="Diminuir">−</button><button class="circle" data-act="mais" aria-label="Aumentar">+</button></div>' +
+      '<div class="modes">'+['Auto','Frio','Quente','Ventilar'].map(function(m){
+        return '<button class="pill'+(s.modo===m?' on':'')+'" data-act="modo" data-m="'+m+'">'+m+'</button>'}).join('')+'</div></div>' +
+      '<div class="card row"><span>Ar-condicionado</span>'+sw(s.ac,'ac',0,'Ar-condicionado')+'</div>';
+  },
+  cfg:function(){
+    return '<p class="mut">Notificações</p>'+s.notif.map(function(x,i){
+      return '<div class="card row"><span>'+x.n+'</span>'+sw(x.on,'notif',i,x.n)+'</div>'}).join('');
+  }
+};
 
-                <!-- Garagem -->
-                <div class="disp-card" id="card-luz-garagem">
-                    <div class="disp-info">
-                        <h3>Luz da Garagem</h3>
-                        <span class="disp-status status-desligado" id="status-luz-garagem">Desligado</span>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" id="check-luz-garagem" onchange="publicarComando('casa/luz/garagem', this.checked ? '1' : '0')">
-                        <span class="slider"></span>
-                    </label>
-                </div>
+var view = document.getElementById('view');
+function render(){
+  view.innerHTML = T[tela]();
+  document.getElementById('title').textContent = titulos[tela];
+  document.getElementById('back').hidden = tela==='home';
+  document.getElementById('sp').hidden = tela!=='home';
+}
+view.addEventListener('click', function(e){
+  var b = e.target.closest('button'); if(!b) return;
+  if(b.dataset.go){tela=b.dataset.go; render(); return}
+  var a = b.dataset.act, i = +b.dataset.i;
+  if(a==='alarme') s.alarme = !s.alarme;
+  else if(a==='cam') s.cams[i].on = !s.cams[i].on;
+  else if(a==='luz') s.luzes[i].on = !s.luzes[i].on;
+  else if(a==='todas') s.luzes.forEach(function(l){l.on = !!i});
+  else if(a==='tranca') s.trancas[i].t = !s.trancas[i].t;
+  else if(a==='menos') s.temp = Math.max(16, s.temp-1);
+  else if(a==='mais') s.temp = Math.min(30, s.temp+1);
+  else if(a==='modo') s.modo = b.dataset.m;
+  else if(a==='ac') s.ac = !s.ac;
+  else if(a==='notif') s.notif[i].on = !s.notif[i].on;
+  pub(a,i);
+  render();
+});
+document.getElementById('back').addEventListener('click', function(){tela='home'; render()});
 
-                <!-- Banheiro -->
-                <div class="disp-card" id="card-luz-banheiro">
-                    <div class="disp-info">
-                        <h3>Luz do Banheiro</h3>
-                        <span class="disp-status status-desligado" id="status-luz-banheiro">Desligado</span>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" id="check-luz-banheiro" onchange="publicarComando('casa/luz/banheiro', this.checked ? '1' : '0')">
-                        <span class="slider"></span>
-                    </label>
-                </div>
+/* ===== MQTT (WebSocket seguro) ===== */
+var MQTT_HOST = "broker.emqx.io"; // broker público do EMQX (emqx.com é só o site)
+var MQTT_PORT = 8084;             // porta WSS
+var MQTT_USER = "RICARDO";
+var MQTT_PASS = "senai";
+var CLIENT_ID = "dashboard_web_" + Math.random().toString(16).substr(2, 8);
+var PREFIX = "senai/ricardo/casa"; // use um prefixo só seu: o broker público é aberto a todos
+var cli = null;
 
-                <!-- Quarto -->
-                <div class="disp-card" id="card-luz-quarto">
-                    <div class="disp-info">
-                        <h3>Luz do Quarto</h3>
-                        <span class="disp-status status-desligado" id="status-luz-quarto">Desligado</span>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" id="check-luz-quarto" onchange="publicarComando('casa/luz/quarto', this.checked ? '1' : '0')">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-
-                <!-- Cozinha -->
-                <div class="disp-card" id="card-luz-cozinha">
-                    <div class="disp-info">
-                        <h3>Luz da Cozinha</h3>
-                        <span class="disp-status status-desligado" id="status-luz-cozinha">Desligado</span>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" id="check-luz-cozinha" onchange="publicarComando('casa/luz/cozinha', this.checked ? '1' : '0')">
+function slug(n){return n.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ /g,'-')}
+function send(t,p){ if(cli && cli.connected) cli.publish(PREFIX+'/'+t, String(p)); }
+function pub(a,i){
+  if(a==='alarme') send('alarme', s.alarme?'ARM':'DISARM');
+  else if(a==='luz') send('luz/'+slug(s.luzes[i].n), s.luzes[i].on?'ON':'OFF');
+  else if(a==='todas') s.luzes.forEach(function(l){send('luz/'+slug(l.n), l.on?'ON':'OFF')});
+  else if(a==='tranca') send('fechadura/'+slug(s.trancas[i].n), s.trancas[i].t?'LOCK':'UNLOCK');
+  else if(a==='menos'||a==='mais') send('clima/temp', s.temp);
+  else if(a==='modo') send('clima/modo', s.modo);
+  else if(a==='ac') send('clima/ac', s.ac?'ON':'OFF');
+}
+function porSlug(lista,sl){return lista.filter(function(x){return slug(x.n)===sl})[0]}
+function onEstado(topic,payload){
+  var p = topic.replace(PREFIX+'/estado/','').split('/'), v = payload.toString(), x;
+  if(p[0]==='luz' && (x=porSlug(s.luzes,p[1]))) x.on = v==='ON';
+  else if(p[0]==='fechadura' && (x=porSlug(s.trancas,p[1]))) x.t = v==='LOCK';
+  else if(p[0]==='alarme') s.alarme = v==='ARM';
+  else if(p[0]==='clima' && p[1]==='ac') s.ac = v==='ON';
+  else if(p[0]==='clima' && p[1]==='temp' && !isNaN(+v)) s.temp = +v;
+  else if(p[0]==='clima' && p[1]==='modo') s.modo = v;
+  else return;
+  render();
+}
+function status(ok,txt){
+  var e = document.getElementById('sp');
+  e.className = 'st' + (ok?' ok':''); e.setAttribute('aria-label','MQTT '+txt);
+}
+function conectar(){
+  if(typeof mqtt==='undefined'){status(false,'indisponível (sem internet)'); return}
+  cli = mqtt.connect('wss://'+MQTT_HOST+':'+MQTT_PORT+'/mqtt', {
+    clientId:CLIENT_ID, username:MQTT_USER, password:MQTT_PASS, reconnectPeriod:3000, connectTimeout:8000
+  });
+  cli.on('connect', function(){ status(true,'conectado'); cli.subscribe(PREFIX+'/estado/#'); });
+  cli.on('reconnect', function(){ status(false,'reconectando'); });
+  cli.on('close', function(){ status(false,'desconectado'); });
+  cli.on('error', function(){ status(false,'com erro'); });
+  cli.on('message', onEstado);
+}
+render();
+conectar();
+</script>
+</body>
+</html>
